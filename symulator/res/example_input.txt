@@ -1,0 +1,6 @@
+{"load": 50, "var_coeff":1, "columns":"process_id,start_time,duration,DTmax"}
+1 0.2 2 3
+2 0.3 3 4
+3 1.4 4 10
+4 2.5 5 20
+5 3.6 6 30
