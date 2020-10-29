@@ -1,9 +1,6 @@
 import json
-from typing import List, Any
+from typing import List
 
-
-def calculate_statistics(file=False, filename="stats.txt"):
-    pass
 
 class Process(object):
     def __init__(self, process_id="0", start_time="0", duration="0", dt_max="0"):
@@ -14,7 +11,7 @@ class Process(object):
         self.dt_max = float(dt_max)
         self.processing_start = -1.0
         self._processing_end = -1.0
-
+        self.max_end_time = self.start_time+self.duration+self.dt_max
 
     def to_string(self):
         attrs = vars(self)
@@ -32,6 +29,16 @@ class Process(object):
     def is_done(self):
         return self.processing_start + self.processed >= self.duration
 
+    #czas opoznienia
+    def get_waiting_time(self):
+        return self.start_time+self.processing_start
+
+    #czas odpowiedzi
+    def get_turn_around_time(self):
+        return self.start_time+self.processing_start+self.processing_end
+
+    def is_done_in_time(self):
+        return self.processing_end <= self.start_time+self.duration+self.dt_max
 
 class Processes(object):
     process_list: List[Process]
@@ -70,9 +77,24 @@ class Event(object):
         self.time = time
         self.process_id = process_id
 
-'''
-zakladam, ze zadania otrzymane z generatora sa posortowane zgodnie z czasem pojawienia sie w systemie
-'''
+
+def calculate_statistics(process_list : List[Process], file=False, filename="stats.txt"):
+    waiting_time = 0.0 # czas opoznienia
+    turn_around_time = 0.0 # czas odpowiedz
+    done_in_time_count = 0
+    for process in process_list:
+        waiting_time += process.get_waiting_time()
+        turn_around_time += process.get_turn_around_time()
+        if process.is_done_in_time():
+            done_in_time_count+=1
+    process_count = len(process_list)
+    print("Sredni czas opoznienia:", round(waiting_time/process_count,2))
+    print("Sredni czas odpowiedzi:", round(turn_around_time / process_count, 2))
+    print("Zadania obsluzone w czasie [%]:", round(100*done_in_time_count/ process_count, 2))
+
+
+
+# zakladam, ze zadania otrzymane z generatora sa posortowane zgodnie z czasem pojawienia sie w systemie
 def basic_fcfs(processes: Processes):
     events = []
     process_list = processes.process_list
@@ -84,7 +106,7 @@ def basic_fcfs(processes: Processes):
         proc.processing_start = time
         proc.processing_end = time + proc.duration
         delay = proc.duration
-        # proc.processing_end=5
+
     print("EVENTS:\nprocess_id processing_start")
     for ev in events:
         print(ev.process_id, ev.time)
@@ -96,8 +118,10 @@ def main():
     procs = Processes()
     procs.read_input_file("../res/example_input.txt")
     procs.print()
-    print("\n",10 * "#", "\nFCFS:")
+    print("\n", 10 * "#", "\nFCFS:")
     basic_fcfs(procs)
+    print("\n", 10 * "#", "\nSTATYSTYKI:")
+    calculate_statistics(procs.process_list)
 
 
 main()
