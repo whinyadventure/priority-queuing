@@ -1,7 +1,7 @@
 
-class Process(object):
+class Task(object):
     def __init__(self, process_id="0", start_time="0", duration="0", dt_max="0"):
-        self.process_id = process_id
+        self.task_id = process_id
         self.start_time = float(start_time)
         self.duration = float(duration)
         self.processed = 0.0

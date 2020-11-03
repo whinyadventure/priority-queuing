@@ -1,14 +1,14 @@
 import json
 from typing import List
 
-from src.Process import *
+from src.Task import *
 
 
-class Processes(object):
-    process_list: List[Process]
+class Tasks(object):
+    tasks_list: List[Task]
 
     def __init__(self):
-        self.process_list = []
+        self.tasks_list = []
         self.parameters = dict()
 
     @staticmethod
@@ -29,11 +29,11 @@ class Processes(object):
         for key, value in self.parameters.items():
             print(key, ":", value, end=" ")
         print("\nProcess list:")
-        for proc in self.process_list:
-            print(proc.to_string())
+        for i_task in self.tasks_list:
+            print(i_task.to_string())
 
 
-def calculate_statistics(process_list: List[Process], file=False, filename="stats.txt"):
+def calculate_statistics(process_list: List[Task], file=False, filename="stats.txt"):
     waiting_time = 0.0  # czas opoznienia
     turn_around_time = 0.0  # czas odpowiedz
     done_in_time_count = 0
