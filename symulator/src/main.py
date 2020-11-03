@@ -1,6 +1,8 @@
 from src.Algorithms import *
 
 
+
+
 def main():
     file_path = "../res/"
     test_filename = "tasks_cv-1-wl-0.95.txt"

@@ -21,8 +21,10 @@ class Tasks(object):
 
     def read_input_file(self, filename="input.txt"):
         with open(filename) as file:
-            data = file.readlines()
-            # parse json
+            self.parameters = json.load(file)
+            tasks_json = self.parameters.pop('tasks', None)
+            for task_json in tasks_json:
+                self.tasks_list.append(Task(task_json["id"], task_json["arrival"], task_json["size"], task_json["dt_max"]))
 
     def print(self):
         print("PARAMETERS: ", end="")

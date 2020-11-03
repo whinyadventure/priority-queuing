@@ -10,22 +10,22 @@ class Event(object):
 def basic_fcfs(processes: Tasks):
     events = []
     tasks_list = processes.tasks_list
-    time = tasks_list[0].start_time
+    time = tasks_list[0].arrival
     delay = 0
     total_idle_time = 0
     finish_time = 0
     for i_task in tasks_list:
         time += delay
-        idle_time = i_task.start_time - time
+        idle_time = i_task.arrival - time
         if idle_time > 0:
             events.append(Event(time, -1))
             time += idle_time
             total_idle_time += idle_time
         events.append(Event(time, i_task.task_id))
         i_task.processing_start = time
-        i_task.processing_end = time + i_task.duration
+        i_task.processing_end = time + i_task.size
         finish_time = i_task.processing_end
-        delay = i_task.duration
+        delay = i_task.size
 
     print("Idle time:", round(total_idle_time, 2), "Load:", round(1.0 - total_idle_time / finish_time, 2), "%")
 
