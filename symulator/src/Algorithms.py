@@ -59,45 +59,25 @@ def super_fcfs(processes: Tasks):
     while not basic_queue.empty():
         next_task = basic_queue.get()[1]
         next_task_arrival = next_task.arrival
-        while time < next_task_arrival:  # rob zadania z poor queue dopoki nie pojawi sie zadanie z basic_queue
+        if time < next_task_arrival:  # rob zadania z poor queue dopoki nie pojawi sie zadanie z basic_queue
+            while not poor_queue.empty():
+                poor_task = poor_queue.get()[1]
+                poor_task_left = poor_task.size-poor_task.processed # ile zadania jeszcze trzeba wykonać
+                poor_task_end = min(time + poor_task_left, next_task_arrival)
 
+                events.append(Event(time, poor_task.task_id))
+                poor_task.processed += poor_task_left-time
+                poor_task.processing_start = min(time, poor_task.processing_start)
+                poor_task.processing_end = time + poor_task_end
+                finish_time = poor_task.processing_end
+                time += poor_task_end
+                if not poor_task.is_done():
+                    poor_queue.put(poor_task)
+        if time < next_task_arrival: #jezeli poor queue jest puste to wstaw idle time od czasu nastepnego zadania z basic queue
             idle_time = next_task_arrival - time
             events.append(Event(time, -1))
             time += idle_time
             total_idle_time += idle_time
-            if False:
-                while not poor_queue.empty():
-                    poor_task = poor_queue.get()[1]
-                    poor_task_left = poor_task.size-poor_task.processed # ile zadania jeszcze trzeba wykonać
-                    poor_task_end = min(time + poor_task_left, next_task_arrival)
-
-                    events.append(Event(time, poor_task.task_id))
-                    poor_task.processed+=poor_task_left-time
-                    poor_task.processing_start = min(time, poor_task.processing_start)
-                    poor_task.processing_end = time + poor_task_end
-                    finish_time = poor_task.processing_end
-                    time += poor_task_end
-                    if not poor_task.is_done():
-                        poor_queue.put(poor_task)
-
-
-                    #to ponizej raczej do wywalenia
-                    '''to_process = next_task_arrival-(time + poor_task_left)
-                    if time + poor_task_left < next_task_arrival: #zdaze dokonczyc przed przybyciem
-                        events.append(Event(time, poor_task.task_id))
-                        poor_task.processing_start = time
-                        poor_task.processing_end = time + poor_task_left
-                        finish_time = poor_task.processing_end
-                        time += poor_task.size
-                    else:
-                        events.append(Event(time, poor_task.task_id))
-                        poor_task.processing_start = time
-                        poor_task.processing_end = time + to_process
-                        finish_time = poor_task.processing_end
-                        time += poor_task.size
-                        pass
-                        #zrob tyle ile sie da
-                        #wstaw do kolejki poor'''
 
         if is_late(next_task, time):
             poor_queue.put((next_task_arrival, next_task))  # w tym drugim algorytmie task.max_end_time
@@ -120,22 +100,6 @@ def super_fcfs(processes: Tasks):
         next_task.processing_end = time + next_task.size
         finish_time = next_task.processing_end
         time += next_task.size
-
-    '''
-    dodaj wszystkie zadania do basic queue (posortowane)
-    while basic_queue is not empty:
-        basic_queue_start_for_next_task = basic_queue.peek().start_time
-        if basic_queue_start_for_next_task >=current_time:
-            tmp = basic_queue.pop()
-            if check_basic_queue_condition(tmp, time) is False:
-                poor_queue.add(tmp)
-            else:
-                tmp zaznacz jako wykonane [uzupelnij pola]
-                current_time+= tmp.size
-        else:
-            wykonuj zadania z poor_queue i  do czasu basic_queue_start_for_next_task
-    wykonaj wszystkie zadania z basic queue 
-    '''
     print("Idle time:", round(total_idle_time, 2), "Load:", round(1.0 - total_idle_time / finish_time, 2), "%")
     print("EVENTS:\nprocess_id processing_start")
     for ev in events:
