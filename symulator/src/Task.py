@@ -9,7 +9,7 @@ class Task(object):
         self.processed = 0.0
         self.dt_max = float(dt_max)
         self.processing_start = -1.0
-        self._processing_end = -1.0
+        self.processing_end = -1.0
         self.max_starting_time = self.arrival + self.dt_max
         self.max_end_time = self.arrival + self.size + self.dt_max
 
@@ -23,17 +23,9 @@ class Task(object):
         attrs = vars(self)
         return format(', '.join("%s: %s" % item for item in attrs.items()))
 
-    @property
-    def processing_end(self):
-        return self._processing_end
-
-    @processing_end.setter
-    def processing_end(self, value):
-        self._processing_end = value
-        self.processed = round(self.processing_end - self.processing_start, 2)
 
     def is_done(self):
-        return self.processing_start + self.processed >= self.size
+        return self.processed >= self.size
 
     # czas opoznienia
     def get_waiting_time(self):

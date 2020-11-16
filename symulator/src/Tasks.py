@@ -34,6 +34,11 @@ class Tasks(object):
         for i_task in self.tasks_list:
             print(i_task.to_string())
 
+    def clear(self):
+        for task in self.tasks_list:
+            task.processed = 0.0
+            task.processing_start = -1.0
+            task.processing_end = -1.0
 
 def calculate_statistics(process_list: List[Task], file=False, filename="stats.txt"):
     waiting_time = 0.0  # czas opoznienia

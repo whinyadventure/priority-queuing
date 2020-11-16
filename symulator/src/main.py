@@ -18,6 +18,7 @@ def main():
         basic_fcfs(tasks)
         print("\n" + 10 * "#", "\nSTATYSTYKI:")
         calculate_statistics(tasks.tasks_list)
+        tasks.clear()
     if opt in [2, 0]:
         print("\n" + 10 * "#", "\nSUPER FCFS:")
         super_fcfs(tasks)
