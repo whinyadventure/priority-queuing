@@ -23,7 +23,6 @@ class Task(object):
         attrs = vars(self)
         return format(', '.join("%s: %s" % item for item in attrs.items()))
 
-
     def is_done(self):
         return self.processed >= self.size
 

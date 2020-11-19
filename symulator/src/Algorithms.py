@@ -13,7 +13,6 @@ def print_info(processes, events, total_idle_time, finish_time):
     print("EVENTS:\nprocess_id processing_start")
     for ev in events:
         print(ev.process_id, ev.time)
-    print()
     processes.print()
 
 
@@ -57,15 +56,17 @@ def super_fcfs(processes: Tasks):
     poor_queue = PriorityQueue()
     print("Algorithm: supers fcfs")
     for task in tasks_list:
-        basic_queue.put((task.arrival, task))  # w tym drugim algorytmie task.max_end_time
-
+        put_task(basic_queue, task, alg_version)
+        #basic_queue.put((task.arrival, task))  # this will be different in the other version of the algorithm
     while not basic_queue.empty():
         next_task = basic_queue.get()[1]
         next_task_arrival = next_task.arrival
         if is_late(next_task, time):
-            poor_queue.put((next_task_arrival, next_task))  # w tym drugim algorytmie task.max_end_time
+            put_task(poor_queue, next_task, alg_version)
+            #poor_queue.put((next_task_arrival, next_task))  # this will be different in the other version of the
+            # algorithm
             continue
-        if time < next_task_arrival:  # rob zadania z poor queue dopoki nie pojawi sie zadanie z basic_queue
+        if time < next_task_arrival:  # do tasks from poor queue as long as you can
             while not poor_queue.empty():
                 poor_task = poor_queue.get()[1]
                 poor_task_left = poor_task.size-poor_task.processed # ile zadania jeszcze trzeba wykonać
@@ -76,9 +77,10 @@ def super_fcfs(processes: Tasks):
                 events.append(Event(time, poor_task.task_id))
                 time = poor_task_end
                 poor_task.processing_end = time
-                finish_time = time
                 if not poor_task.is_done():
-                    poor_queue.put((poor_task.arrival, poor_task))
+                    put_task(poor_queue, poor_task, alg_version)
+                    #poor_queue.put((poor_task.arrival, poor_task))  # this will be different in the other version of
+                    # the algorithm
                 if time >= next_task_arrival:
                     break
         if time < next_task_arrival: #jezeli poor queue jest puste to wstaw idle time od czasu nastepnego zadania z basic queue
