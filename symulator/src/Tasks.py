@@ -40,6 +40,7 @@ class Tasks(object):
             task.processing_start = -1.0
             task.processing_end = -1.0
 
+
 def calculate_statistics(process_list: List[Task], file=False, filename="stats.txt"):
     waiting_time = 0.0  # czas opoznienia
     turn_around_time = 0.0  # czas odpowiedz
@@ -50,6 +51,11 @@ def calculate_statistics(process_list: List[Task], file=False, filename="stats.t
         if process.is_done_in_time():
             done_in_time_count += 1
     process_count = len(process_list)
-    print("Sredni czas opoznienia:", round(waiting_time / process_count, 2))
-    print("Sredni czas odpowiedzi:", round(turn_around_time / process_count, 2))
-    print("Zadania obsluzone w czasie [%]:", round(100 * done_in_time_count / process_count, 2))
+    avg_late = round(waiting_time / process_count, 2)
+    avg_latency = round(turn_around_time / process_count, 2)
+    done_in_time_percent = round(100 * done_in_time_count / process_count, 2)
+    print("Sredni czas opoznienia:", avg_late)
+    print("Sredni czas odpowiedzi:", avg_latency)
+    print("Zadania obsluzone w czasie [%]:", done_in_time_percent)
+    # todo write to file
+    return avg_late, avg_latency, done_in_time_percent
