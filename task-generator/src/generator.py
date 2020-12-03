@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.stats import skewnorm
 import matplotlib.pyplot as plt
 import json
 
@@ -7,74 +8,84 @@ from src.task import *
 
 
 class Generator(object):
-    def __init__(self, c_var, workload):     # coefficient of variation, system workload
+    def __init__(self, c_var, workload):  # coefficient of variation, system workload
         self.c_var = c_var
         self.workload = workload
-        self.intervals = []     # number of tasks in consecutive time intervals
-        self.tasks = []     # list of tasks arranged chronologically
+        self.bimodal = None
+        self.intervals = []  # number of tasks in consecutive time intervals
+        self.tasks = []  # list of tasks arranged chronologically
         self.sizes = []
 
     # TODO: concatenation of two normal distributions or erlang and normal distributions
     #       tuning distribution input arguments to get expected value of coefficient of variation
 
     def populate_intervals(self):
-        '''
-        mu_1 = np.random.randint(MIN_INIT_MEAN, MAX_INIT_MEAN)
-        sigma_1 = mu_1 * self.c_var     # c_var = std_dev / mean
 
-        mu_2 = mu_1 * self.c_var ** 2
-        sigma_2 = sigma_1 * (1 + 0.1 * self.c_var)
+        if self.c_var == 1:
+            mean_1 = 5
+            std_1 = 10
+            size_1 = 0.5 * N_SAMPLES
 
-        dist_1 = np.random.normal(mu_1, sigma_1, N_SAMPLES)
-        dist_2 = np.random.normal(mu_2, sigma_2, N_SAMPLES)
+            mean_2 = 5
+            std_2 = 45
+            size_2 = N_SAMPLES - size_1
 
-        bimodal_dist = np.concatenate([dist_1, dist_2])
+            norm_1 = np.random.normal(mean_1, std_1, int(size_1))
+            norm_2 = np.random.normal(mean_2, std_2, int(size_2))
 
-        self.intervals = random.choices(bimodal_dist, k=INTERVALS)
-        '''
+            bimodal = np.concatenate([norm_1, norm_2])
+            self.bimodal = np.intc((np.round(bimodal[bimodal > 1])))
+        else:
+            pass
 
-        # self.intervals = [3, 3, 4, 7, 8]
-        self.intervals = np.random.randint(0, 5, 5)
+        self.intervals = np.random.choice(self.bimodal, INTERVALS)
 
-    def get_arrival_time(self):
+    def draw_arrival_times(self):
         current_id = 1
+        duplicates = []
 
         for idx, val in enumerate(self.intervals):
-            arrivals = np.random.exponential(size=val) * 0.1
+            arrivals = np.round(np.random.exponential(size=val) * 0.1, 8)
             arrivals.sort()
+
+            duplicates.append(len(arrivals) == len(set(arrivals)))
 
             for i in range(val):
                 self.tasks.append(Task(current_id, arrivals[i] + idx))
                 current_id += 1
 
-    def get_size(self):     # mean size of tasks = system workload / mean nbr of tasks per interval
+        print(f'arrivals: {all(duplicates)}')
+
+    def draw_sizes(self):  # mean size of tasks = system workload / mean nbr of tasks per interval
         mean_nbr = np.mean(self.intervals)
         mean_size = self.workload / mean_nbr
-        self.sizes = np.random.normal(mean_size, mean_size*0.1, sum(self.intervals))    # max/min approx 2
+        self.sizes = np.random.normal(mean_size, mean_size * 0.1, sum(self.intervals))  # max/min approx 2
 
         for idx, val in enumerate(self.sizes):
             self.tasks[idx].size = val
 
-    def get_dt_max(self, same=True):
+    def draw_dts_max(self, same=True):
         mean_size = np.mean(self.sizes)
-        dt_max = np.random.normal(mean_size, mean_size*0.25)    # minimize probability of negative value -> 4 * std_dev
+        dt_max = np.random.normal(mean_size, mean_size * 0.25)  # minimize probability of negative value -> 4 * std_dev
 
         for task in self.tasks:
             task.dt_max = dt_max
 
             if not same:
-                dt_max = np.random.normal(mean_size, mean_size*0.25)
+                dt_max = np.random.normal(mean_size, mean_size * 0.25)
 
     def save_to_file(self):
         directory = 'res/'
-        filename = f'tasks_cv-{self.c_var}-wl-{self.workload}.txt'
+        # cv - coefficient of variation, wl - system workload, in - nbr of intervals
+        filename = f'tasks_cv-{self.c_var}-wl-{self.workload}-in-{len(self.intervals)}.txt'
         path = directory + filename
 
         with open(path, "w") as file:
-            content = {'c_var': self.c_var,
-                        'workload': self.workload,
-                        'columns': 'id arrival size dt_max',
-                        'tasks': [ob.__dict__ for ob in self.tasks]}
+            content = {'c_var': np.std(self.intervals) / np.mean(self.intervals),
+                       'workload': np.mean(self.intervals) * np.mean(self.sizes),
+                       'intervals_n': len(self.intervals),
+                       'columns': 'id arrival size dt_max',
+                       'tasks': [ob.__dict__ for ob in self.tasks]}
 
             json.dump(content, file, indent=2)
 
@@ -86,6 +97,11 @@ class Generator(object):
             cols = cols.split()
 
             return [Task(item[cols[0]], item[cols[1]], item[cols[2]], item[cols[3]]) for item in data['tasks']]
+
+    def print_intervals(self):
+        print(f'\nGENERATED INTERVALS')
+        print(f'c_var: {np.std(self.intervals) / np.mean(self.intervals)}\n')
+        print('\n'.join(f'[{idx}-{idx + 1}]: {val}' for idx, val in enumerate(self.intervals)))
 
     def sizes_stats(self):
         print(f'\nGENERATED TASK SIZES STATISTICS')
@@ -112,6 +128,6 @@ class Generator(object):
         for task in self.tasks:
             print(f'id: {task.id} arrival time: {task.arrival} size: {task.size} dt_max: {task.dt_max}')
 
-    # TODO: plotting as hist generated bimodal distribution
     def plot_bimodal(self):
-        pass
+        plt.hist(self.bimodal, N_BINS, density=True)
+        plt.show()
