@@ -41,7 +41,7 @@ class Tasks(object):
             task.processing_end = -1.0
 
 
-def calculate_statistics(process_list: List[Task], file=False, filename="stats.txt"):
+def calculate_statistics(process_list: List[Task], round_opt=False, verbose=False):
     waiting_time = 0.0  # czas opoznienia
     turn_around_time = 0.0  # czas odpowiedz
     done_in_time_count = 0
@@ -51,14 +51,16 @@ def calculate_statistics(process_list: List[Task], file=False, filename="stats.t
         if process.is_done_in_time():
             done_in_time_count += 1
     process_count = len(process_list)
-    avg_late = round(waiting_time / process_count, 2)
-    avg_latency = round(turn_around_time / process_count, 2)
-    done_in_time_percent = round(100 * done_in_time_count / process_count, 2)
-    avg_late = waiting_time / process_count
-    avg_latency = turn_around_time / process_count
-    done_in_time_percent = 100 * done_in_time_count / process_count
-    print("Sredni_czas_opoznienia:", avg_late)
-    print("Sredni_czas_odpowiedzi:", avg_latency)
-    print("Zadania_obsluzone_w_czasie [%]:", done_in_time_percent)
-    # todo write to file
+    if round_opt:
+        avg_late = round(waiting_time / process_count, 2)
+        avg_latency = round(turn_around_time / process_count, 2)
+        done_in_time_percent = round(100 * done_in_time_count / process_count, 2)
+    else:
+        avg_late = waiting_time / process_count
+        avg_latency = turn_around_time / process_count
+        done_in_time_percent = 100 * done_in_time_count / process_count
+    if verbose:
+        print("Sredni_czas_opoznienia:", avg_late)
+        print("Sredni_czas_odpowiedzi:", avg_latency)
+        print("Zadania_obsluzone_w_czasie [%]:", done_in_time_percent)
     return avg_late, avg_latency, done_in_time_percent
