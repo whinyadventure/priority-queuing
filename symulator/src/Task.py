@@ -14,25 +14,27 @@ class Task(object):
         self.max_end_time = self.arrival + self.size + self.dt_max
 
     def to_string(self):
-        self.arrival = round(self.arrival, 2)
+        '''self.arrival = round(self.arrival, 2)
         self.size = round(self.size, 2)
         self.dt_max = round(self.dt_max, 2)
         self.processed = round(self.processed, 2)
         self.processing_start = round(self.processing_start, 2)
-        self.processing_end = round(self.processing_end, 2)
+        self.processing_end = round(self.processing_end, 2)'''
         attrs = vars(self)
         return format(', '.join("%s: %s" % item for item in attrs.items()))
 
     def is_done(self):
-        return self.processed >= self.size
+        return self.processed >= self.size-0.000000001
 
     # czas opoznienia
     def get_waiting_time(self):
-        return self.arrival + self.processing_start
+        return  self.processing_start - self.arrival
 
     # czas odpowiedzi
     def get_turn_around_time(self):
-        return self.arrival + self.processing_start + self.processing_end
+        return  self.processing_end - self.arrival
+        #return self.arrival + self.processing_start + self.processing_end
+
 
     def is_done_in_time(self):
         return self.processing_end <= self.arrival + self.size + self.dt_max
