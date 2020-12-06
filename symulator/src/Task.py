@@ -13,13 +13,14 @@ class Task(object):
         self.max_starting_time = self.arrival + self.dt_max
         self.max_end_time = self.arrival + self.size + self.dt_max
 
-    def to_string(self):
-        '''self.arrival = round(self.arrival, 2)
-        self.size = round(self.size, 2)
-        self.dt_max = round(self.dt_max, 2)
-        self.processed = round(self.processed, 2)
-        self.processing_start = round(self.processing_start, 2)
-        self.processing_end = round(self.processing_end, 2)'''
+    def to_string(self, round_params = False):
+        if round_params:
+            self.arrival = round(self.arrival, 2)
+            self.size = round(self.size, 2)
+            self.dt_max = round(self.dt_max, 2)
+            self.processed = round(self.processed, 2)
+            self.processing_start = round(self.processing_start, 2)
+            self.processing_end = round(self.processing_end, 2)
         attrs = vars(self)
         return format(', '.join("%s: %s" % item for item in attrs.items()))
 
