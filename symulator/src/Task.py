@@ -29,13 +29,12 @@ class Task(object):
 
     # czas opoznienia
     def get_waiting_time(self):
-        return  self.processing_start - self.arrival
+        return self.processing_start - self.arrival
 
     # czas odpowiedzi
     def get_turn_around_time(self):
-        return  self.processing_end - self.arrival
-        #return self.arrival + self.processing_start + self.processing_end
-
+        return self.processing_end - self.arrival
+        # return self.processing_end - self.arrival - self.size
 
     def is_done_in_time(self):
         return self.processing_end <= self.arrival + self.size + self.dt_max

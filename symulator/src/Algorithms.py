@@ -58,7 +58,7 @@ def do_poor_queue(poor_queue, next_task_arrival, time,  events, alg_version):
             put_task(poor_queue, poor_task, alg_version)
         if time >= next_task_arrival:
             break
-    return time
+    return time, poor_queue
 
 
 #todo clean up the code
@@ -80,7 +80,7 @@ def super_fcfs(processes: Tasks):
             put_task(poor_queue, next_task, alg_version)
             continue
         if time < next_task_arrival:  # highest priority task has not arrived yet
-            time = do_poor_queue(poor_queue,next_task_arrival,time, events,alg_version)
+            time, poor_queue = do_poor_queue(poor_queue, next_task_arrival, time, events, alg_version)
         idle_time, finish_time = do_task(next_task, time, events)
         total_idle_time += idle_time
         time += next_task.size
