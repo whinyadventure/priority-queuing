@@ -4,5 +4,3 @@ class Task:
         self.arrival = arrival
         self.size = size
         self.dt_max = dt_max      # maximum tolerable delay
-
-

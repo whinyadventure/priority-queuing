@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.stats import skewnorm
 import matplotlib.pyplot as plt
 import json
 
@@ -19,7 +18,7 @@ class Generator(object):
     # TODO: concatenation of two normal distributions or erlang and normal distributions
     #       tuning distribution input arguments to get expected value of coefficient of variation
 
-    def populate_intervals(self):
+    def populate_intervals(self, interval_nbr):
 
         if self.c_var == 1:
             mean_1 = 5
@@ -38,7 +37,7 @@ class Generator(object):
         else:
             pass
 
-        self.intervals = np.random.choice(self.bimodal, INTERVALS)
+        self.intervals = np.random.choice(self.bimodal, interval_nbr)
 
     def draw_arrival_times(self):
         current_id = 1
@@ -74,8 +73,7 @@ class Generator(object):
             if not same:
                 dt_max = np.random.normal(mean_size, mean_size * 0.25)
 
-    def save_to_file(self):
-        directory = 'res/'
+    def save_to_file(self, directory):
         # cv - coefficient of variation, wl - system workload, in - nbr of intervals
         filename = f'tasks_cv-{self.c_var}-wl-{self.workload}-in-{len(self.intervals)}.txt'
         path = directory + filename
@@ -88,6 +86,13 @@ class Generator(object):
                        'tasks': [ob.__dict__ for ob in self.tasks]}
 
             json.dump(content, file, indent=2)
+
+    def generate_log(self, directory, interval_nbr):
+        self.populate_intervals(interval_nbr)
+        self.draw_arrival_times()
+        self.draw_sizes()
+        self.draw_dts_max()
+        self.save_to_file(directory)
 
     @staticmethod
     def load_from_file(path='res/tasks_cv-1-wl-0.95.txt'):
