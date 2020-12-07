@@ -16,6 +16,26 @@ def print_info(processes, events, total_idle_time, finish_time):
     processes.print()
 
 
+def do_task(task: Task, time: float, events):
+    idle_time = task.arrival - time
+    if idle_time > 0:
+        events.append(Event(time, -1))
+        time += idle_time
+    events.append(Event(time, task.task_id))
+    task.processing_start = time
+    task.processing_end = time + task.size
+    task.processed = task.processing_end-task.processing_start
+    finish_time = task.processing_end
+    return max(0, idle_time), finish_time
+
+
+def put_task(queue: PriorityQueue, task: Task, alg_version: int):
+    if alg_version == 0:
+        queue.put((task.arrival, task))  # w tym drugim algorytmie task.max_end_time
+    else:
+        queue.put((task.max_starting_time, task))  # w tym drugim algorytmie task.max_starting_time
+
+
 def basic_fcfs(processes: Tasks):
     events = []
     tasks_list = processes.tasks_list
@@ -25,16 +45,9 @@ def basic_fcfs(processes: Tasks):
     finish_time = 0
     for i_task in tasks_list:
         time += delay
-        idle_time = i_task.arrival - time
-        if idle_time > 0:
-            events.append(Event(time, -1))
-            time += idle_time
-            total_idle_time += idle_time
-        events.append(Event(time, i_task.task_id))
-        i_task.processing_start = time
-        i_task.processing_end = time + i_task.size
+        idle_time, finish_time = do_task(i_task, time, events)
+        total_idle_time += idle_time
         i_task.processed = i_task.processing_end - i_task.processing_start
-        finish_time = i_task.processing_end
         delay = i_task.size
     #print_info(processes, events, total_idle_time, finish_time)
     #processes.print()
@@ -61,9 +74,9 @@ def do_poor_queue(poor_queue, next_task_arrival, time,  events, alg_version):
     return time, poor_queue
 
 
-#todo clean up the code
-#todo more testing
-def super_fcfs(processes: Tasks):
+# todo clean up the code
+# todo more testing
+def super_fcfs_vol1(processes: Tasks, alg_version: int = 0):
     events = []
     tasks_list = processes.tasks_list
     time = tasks_list[0].arrival
@@ -87,19 +100,9 @@ def super_fcfs(processes: Tasks):
 
     while not poor_queue.empty():
         next_task = poor_queue.get()[1]
-        idle_time = next_task.arrival - time
-        if idle_time > 0:
-            events.append(Event(time, -1))
-            time += idle_time
-            total_idle_time += idle_time
-        events.append(Event(time, next_task.task_id))
-        next_task.processing_start = time
-        next_task.processing_end = time + next_task.size
-        finish_time = next_task.processing_end
+        idle_time, finish_time = do_task(next_task, time, events)
+        total_idle_time += idle_time
         time += next_task.size
-    print("Idle time:", round(total_idle_time, 2), "Load:", round(1.0 - total_idle_time / finish_time, 2), "%")
-    print("EVENTS:\nprocess_id processing_start")
-    for ev in events:
-        print(ev.process_id, ev.time)
-    print()
-    processes.print()
+    #print_info(processes, events, total_idle_time, finish_time)
+
+
