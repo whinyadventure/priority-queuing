@@ -38,3 +38,6 @@ class Task(object):
 
     def is_done_in_time(self):
         return self.processing_end <= self.arrival + self.size + self.dt_max
+
+    def __lt__(self, other):
+        return self.task_id < other.task_id
