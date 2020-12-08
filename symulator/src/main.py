@@ -2,7 +2,7 @@ from src.TestResults import *
 
 
 if __name__ == '__main__':
-    test_res = TestsResults()
+
     alg_test = 2
     cv_values = [1]
     workload_values = range(1, 10)
@@ -11,6 +11,7 @@ if __name__ == '__main__':
     results = []
     files_number = len(cv_values) * len(workload_values) * len(interval_numbers) * tests_no
     current_file_number = 0
+    test_res = TestsResults(interval_numbers)
     for cv_value in cv_values:
         path = "../res/cv-"+str(cv_value)+"/"
         for workload_value in workload_values:
@@ -38,6 +39,6 @@ if __name__ == '__main__':
                     print('\r\tProgress: [%d%%]' % (100 * current_file_number / files_number), end="")
 
     #test_res.print_all()
-    #test_res.to_file()
-    test_res.plot_results(output_path="../output/", show=True, to_file=False)
-    test_res.plot_differences(output_path="../output/", show=True, to_file=False)
+    test_res.to_file(path="../output/")
+    test_res.plot_results(output_path="../output/", show=False, to_file=True)
+    test_res.plot_differences(output_path="../output/", show=False, to_file=True)
