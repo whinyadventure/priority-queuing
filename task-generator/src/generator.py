@@ -56,7 +56,8 @@ class Generator(object):
         output = 0
 
         while np.min(output) <= 0:
-            output = np.around(np.random.normal(mean, mean * multiplier, out_size), 1)
+            # output = np.around(np.random.normal(mean, mean * multiplier, out_size), 1)
+            output = np.random.normal(mean, mean * multiplier, out_size)
 
         return output if len(output) > 1 else float(output)
 

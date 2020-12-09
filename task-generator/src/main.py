@@ -14,8 +14,8 @@ def generate_log_batch(cv, test_nbr):
             except OSError:
                 print("Creation of the directory %s failed" % directory)
             else:
-                for wl in range(10, 100, 10):
-                    gen = Generator(cv, wl)
+                for wl in range(1, 10):
+                    gen = Generator(cv, np.round(wl * 0.1, 1))
                     gen.generate_log(directory, itr)
 
 
@@ -25,7 +25,7 @@ if __name__ == '__main__':
     generate_log_batch(1, N_TESTS)  # coefficient of variance, number of tests
 
     '''
-    gen = Generator(1, 10)
+    gen = Generator(1, 0.1)
     gen.populate_intervals(1000)
     gen.intervals_stats()
     gen.draw_arrival_times()
