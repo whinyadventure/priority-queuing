@@ -1,37 +1,42 @@
 {
   "c_var": 1,
-  "workload": 0.95,
-  "columns": "id arrival size dt_max",
+  "workload": 90,
+  "columns": "id arrival size dt_max_const dt_max",
   "tasks": [
     {
       "id": 1,
       "arrival": 0.00,
       "size": 6.00,
+      "dt_max_const": 1.00,
       "dt_max": 1.00
     },
     {
       "id": 2,
       "arrival": 3.00,
       "size": 5.00,
-      "dt_max": 1.00
+      "dt_max_const": 1.00,
+      "dt_max": 0.50
     },
     {
       "id": 3,
       "arrival": 8.00,
       "size": 3.00,
-      "dt_max": 1.00
+      "dt_max_const": 1.00,
+      "dt_max": 2.00
     },
     {
       "id": 4,
       "arrival": 16.00,
       "size": 3.00,
-      "dt_max": 1.00
+      "dt_max_const": 1.00,
+      "dt_max": 4.00
     },
     {
       "id": 5,
       "arrival": 17.00,
       "size": 2.00,
-      "dt_max": 1.00
+      "dt_max_const": 1.00,
+      "dt_max": 2.00
     }
   ]
 }

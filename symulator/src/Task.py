@@ -1,38 +1,28 @@
-# todo remove round(...,2)
-
 class Task:
-    def __init__(self, process_id="0", start_time="0", duration="0", dt_max="0"):
+    def __init__(self, process_id='0', start_time='0', duration='0', dt_max_const='0', dt_max='0', use_const=True):
         self.task_id = process_id
         self.arrival = float(start_time)
         self.size = float(duration)
-        self.processed = 0.0
+        self.dt_max_const = float(dt_max_const)
         self.dt_max = float(dt_max)
+
+        self.processed = 0.0
         self.processing_start = -1.0
         self.processing_end = -1.0
-        self.max_starting_time = self.arrival + self.dt_max
-        self.max_end_time = self.arrival + self.size + self.dt_max
+        self.max_starting_time = self.arrival + (self.dt_max_const if use_const else self.dt_max)
+        self.max_end_time = self.arrival + self.size + (self.dt_max_const if use_const else self.dt_max)
 
-    def to_string(self, round_params=False):
-        if round_params:
-            self.arrival = round(self.arrival, 2)
-            self.size = round(self.size, 2)
-            self.dt_max = round(self.dt_max, 2)
-            self.processed = round(self.processed, 2)
-            self.processing_start = round(self.processing_start, 2)
-            self.processing_end = round(self.processing_end, 2)
-
-        attrs = vars(self)
-
-        return format(', '.join("%s: %s" % item for item in attrs.items()))
+    def to_string(self):
+        return format(', '.join("%s: %s" % item for item in vars(self).items()))
 
     def is_done(self):
         return self.processed >= self.size-0.000000001
 
-    # time exceeding arrival + max_dt
+    # time exceeding (arrival + max_dt_const/max_dt)
     def get_delay_time(self):
-        return max(self.processing_start - (self.arrival + self.dt_max), 0)
+        return max(self.processing_start - self.max_starting_time, 0)
 
-    # whole time spent in system
+    # total time spent in system
     def get_response_time(self):
         return self.processing_end - self.arrival
 

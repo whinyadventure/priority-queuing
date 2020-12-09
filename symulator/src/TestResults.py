@@ -6,19 +6,17 @@ from src.Algorithms import *
 
 class Test:
     def __init__(self, filename, cv, wl, interval_number, alg_type, avg_late, avg_latency, done_in_time_percent):
-        self.interval_number = interval_number
+        self.filename = filename
         self.cv = cv
         self.wl = wl
+        self.interval_number = interval_number
         self.alg_type = alg_type
         self.avg_late = avg_late
         self.avg_latency = avg_latency
         self.done_in_time_percent = done_in_time_percent
-        self.filename = filename
 
     def to_string(self):
-        attrs = vars(self)
-
-        return format(', '.join("%s: %s" % item for item in attrs.items()))
+        return format(', '.join("%s: %s" % item for item in vars(self).items()))
 
 
 class TestsResults(object):
@@ -56,7 +54,7 @@ class TestsResults(object):
 
         return self.df
 
-    def do_plot(self,df, variables, type=0, to_file=True, show=False, const_param="cv", const_param_value=1, x_var="wl", output_path=""):
+    def do_plot(self, df, variables, type=0, to_file=True, show=False, const_param="cv", const_param_value=1, x_var="wl", output_path=""):
         titles = ['Średni czas opóźnienia', 'Średni czas odpowiedzi', 'Zadania obsłużone w czasie [%]']
         intervals_number = len(self.intervals)
         fig, big_axes = plt.subplots(figsize=(5.0*intervals_number, 15.0), nrows=3, ncols=1, sharey=True)

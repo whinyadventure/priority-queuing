@@ -19,7 +19,7 @@ class Tasks(object):
     def parse_parameters(line):
         return json.loads(line)
 
-    def read_input_file(self, filename="input.txt"):
+    def read_input_file(self, filename="input.txt", use_const=True):
         with open(filename) as file:
             self.parameters = json.load(file)
             tasks_json = self.parameters.pop('tasks', None)
@@ -28,7 +28,9 @@ class Tasks(object):
                 self.tasks_list.append(Task(task_json["id"],
                                             task_json["arrival"],
                                             task_json["size"],
-                                            task_json["dt_max"]))
+                                            task_json["dt_max_const"],
+                                            task_json["dt_max"],
+                                            use_const))
 
     def print(self):
         print("PARAMETERS: ", end="")

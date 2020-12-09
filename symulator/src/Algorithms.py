@@ -9,11 +9,13 @@ class Event(object):
 
 
 def print_info(processes, events, total_idle_time, finish_time):
-    print(f'Idle time: {total_idle_time} Finish time: {finish_time} Load: {round(1.0-total_idle_time/finish_time, 2)}')
+    print(f'Idle time: {total_idle_time} Finish time: {finish_time} '
+          f'Load: {round(1.0 - total_idle_time / finish_time, 2)}')
     print('EVENTS:\nprocess_id processing_start')
 
     for ev in events:
         print(ev.process_id, ev.time)
+
     processes.print()
 
 
@@ -47,8 +49,7 @@ def basic_fcfs(processes: Tasks):
         idle_time, time = do_task(i_task, time, events)
         total_idle_time += idle_time
 
-    #print_info(processes, events, total_idle_time, time)
-    #processes.print()
+    # print_info(processes, events, total_idle_time, time)
 
 
 def do_poor_queue(poor_queue, next_task_arrival, time, events):
@@ -102,6 +103,6 @@ def enhanced_fcfs(processes: Tasks):
         idle_time, time = do_task(next_task, time, events)
         total_idle_time += idle_time
 
-    #print_info(processes, events, total_idle_time, time)
+    # print_info(processes, events, total_idle_time, time)
 
 
