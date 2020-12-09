@@ -23,13 +23,18 @@ class Tasks(object):
         with open(filename) as file:
             self.parameters = json.load(file)
             tasks_json = self.parameters.pop('tasks', None)
+
             for task_json in tasks_json:
-                self.tasks_list.append(Task(task_json["id"], task_json["arrival"], task_json["size"], task_json["dt_max"]))
+                self.tasks_list.append(Task(task_json["id"],
+                                            task_json["arrival"],
+                                            task_json["size"],
+                                            task_json["dt_max"]))
 
     def print(self):
         print("PARAMETERS: ", end="")
         for key, value in self.parameters.items():
             print(key, ":", value, end=" ")
+
         print("\nProcess list:")
         for i_task in self.tasks_list:
             print(i_task.to_string())
@@ -42,25 +47,30 @@ class Tasks(object):
 
 
 def calculate_statistics(process_list: List[Task], round_opt=False, verbose=False):
-    waiting_time = 0.0  # czas opoznienia
-    turn_around_time = 0.0  # czas odpowiedz
+    delay_time = 0.0
+    response_time = 0.0
     done_in_time_count = 0
+    process_count = len(process_list)
+
     for process in process_list:
-        waiting_time += process.get_waiting_time()
-        turn_around_time += process.get_turn_around_time()
+        delay_time += process.get_delay_time()
+        response_time += process.get_response_time()
+
         if process.is_done_in_time():
             done_in_time_count += 1
-    process_count = len(process_list)
+
     if round_opt:
-        avg_late = round(waiting_time / process_count, 2)
-        avg_latency = round(turn_around_time / process_count, 2)
+        avg_late = round(delay_time / process_count, 2)
+        avg_latency = round(response_time / process_count, 2)
         done_in_time_percent = round(100 * done_in_time_count / process_count, 2)
     else:
-        avg_late = waiting_time / process_count
-        avg_latency = turn_around_time / process_count
+        avg_late = delay_time / process_count
+        avg_latency = response_time / process_count
         done_in_time_percent = 100 * done_in_time_count / process_count
+
     if verbose:
         print("Sredni_czas_opoznienia:", avg_late)
         print("Sredni_czas_odpowiedzi:", avg_latency)
         print("Zadania_obsluzone_w_czasie [%]:", done_in_time_percent)
+
     return avg_late, avg_latency, done_in_time_percent
