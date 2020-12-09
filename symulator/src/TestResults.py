@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from src.Algorithms import *
 
 
-class Test(object):
+class Test:
     def __init__(self, filename, cv, wl, interval_number, alg_type, avg_late, avg_latency, done_in_time_percent):
         self.interval_number = interval_number
         self.cv = cv
@@ -17,6 +17,7 @@ class Test(object):
 
     def to_string(self):
         attrs = vars(self)
+
         return format(', '.join("%s: %s" % item for item in attrs.items()))
 
 
@@ -45,12 +46,14 @@ class TestsResults(object):
     def to_file(self, filename="output.txt", path=""):
         if self.df is None:
             self.to_data_frame()
-        self.df.to_csv(path+filename, index=False)
+
+        self.df.to_csv(path + filename, index=False)
 
     def to_data_frame(self):
         variables = ['filename', 'cv', 'wl', 'interval_number', 'alg_type', 'avg_late', 'avg_latency', 'done_in_time_percent']
         self.df = pd.DataFrame([[getattr(i, j) for j in variables] for i in self.test_list], columns=variables)
         self.df = self.df.groupby(["filename", "alg_type"]).mean().reset_index()
+
         return self.df
 
     def do_plot(self,df, variables, type=0, to_file=True, show=False, const_param="cv", const_param_value=1, x_var="wl", output_path=""):
@@ -69,7 +72,7 @@ class TestsResults(object):
                 ax = fig.add_subplot(3, intervals_number, pos)
                 ax.set_title(str(interval) + " interwałów")
                 # ax.set_ylim(bottom=0)
-                if type is 0:
+                if type == 0:
                     df[(df["alg_type"] == 0) & (df["interval_number"] == interval)].plot(kind='line', x=x_var, y=var,
                                                                                          color='red', ax=ax,
                                                                                          label="Algorytm podstawowy")
@@ -85,7 +88,7 @@ class TestsResults(object):
         plt.tight_layout()
 
         if to_file:
-            if type is 1:
+            if type == 1:
                 output_filename = output_path + const_param + '-' + str(const_param_value) + '.png'
             else:
                 output_filename = output_path + 'diff-' + const_param + '-' + str(const_param_value) + '.png'

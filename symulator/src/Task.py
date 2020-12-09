@@ -1,7 +1,6 @@
 # todo remove round(...,2)
 
-
-class Task(object):
+class Task:
     def __init__(self, process_id="0", start_time="0", duration="0", dt_max="0"):
         self.task_id = process_id
         self.arrival = float(start_time)
@@ -13,7 +12,7 @@ class Task(object):
         self.max_starting_time = self.arrival + self.dt_max
         self.max_end_time = self.arrival + self.size + self.dt_max
 
-    def to_string(self, round_params = False):
+    def to_string(self, round_params=False):
         if round_params:
             self.arrival = round(self.arrival, 2)
             self.size = round(self.size, 2)
@@ -21,23 +20,24 @@ class Task(object):
             self.processed = round(self.processed, 2)
             self.processing_start = round(self.processing_start, 2)
             self.processing_end = round(self.processing_end, 2)
+
         attrs = vars(self)
+
         return format(', '.join("%s: %s" % item for item in attrs.items()))
 
     def is_done(self):
         return self.processed >= self.size-0.000000001
 
-    # czas opoznienia
-    def get_waiting_time(self):
-        return self.processing_start - self.arrival
+    # time exceeding arrival + max_dt
+    def get_delay_time(self):
+        return max(self.processing_start - (self.arrival + self.dt_max), 0)
 
-    # czas odpowiedzi
-    def get_turn_around_time(self):
+    # whole time spent in system
+    def get_response_time(self):
         return self.processing_end - self.arrival
-        # return self.processing_end - self.arrival - self.size
 
     def is_done_in_time(self):
-        return self.processing_end <= self.arrival + self.size + self.dt_max
+        return self.processing_start <= self.max_starting_time
 
     def __lt__(self, other):
         return self.task_id < other.task_id
