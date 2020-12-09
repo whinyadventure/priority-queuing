@@ -14,8 +14,8 @@ def generate_log_batch(cv, test_nbr):
             except OSError:
                 print("Creation of the directory %s failed" % directory)
             else:
-                for wl in np.linspace(0.1, 0.9, num=9):
-                    gen = Generator(cv, np.round(wl, 1))
+                for wl in range(10, 100, 10):
+                    gen = Generator(cv, wl)
                     gen.generate_log(directory, itr)
 
 
@@ -24,6 +24,19 @@ if __name__ == '__main__':
 
     generate_log_batch(1, N_TESTS)  # coefficient of variance, number of tests
 
+    '''
+    gen = Generator(1, 10)
+    gen.populate_intervals(1000)
+    gen.intervals_stats()
+    gen.draw_arrival_times()
+    gen.are_arrivals_unique()
+    gen.draw_sizes()
+    gen.sizes_stats()
+    gen.draw_dts_max()
+    gen.dt_max_stats()
+    gen.save_to_file('res/')
+    #gen.print_tasks()
+    '''
 
 
 
