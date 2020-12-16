@@ -15,27 +15,18 @@ class Generator(object):
         self.tasks = []  # list of tasks arranged chronologically
         self.sizes = []
 
-    # TODO: concatenation of two normal distributions or erlang and normal distributions
-    #       tuning distribution input arguments to get expected value of coefficient of variation
-
     def populate_intervals(self, interval_nbr):
+        size_1 = PARAMS[self.c_var - 1][0] * N_SAMPLES
 
-        if self.c_var == 1:
-            mean_1 = 3
-            std_1 = 6
-            size_1 = 0.5 * N_SAMPLES
+        mean_2 = PARAMS[self.c_var - 1][1]
+        std_2 = PARAMS[self.c_var - 1][2]
+        size_2 = N_SAMPLES - size_1
 
-            mean_2 = 3
-            std_2 = 27
-            size_2 = N_SAMPLES - size_1
+        norm_1 = np.random.normal(MEAN_1, STD_1, int(size_1))
+        norm_2 = np.random.normal(mean_2, std_2, int(size_2))
 
-            norm_1 = np.random.normal(mean_1, std_1, int(size_1))
-            norm_2 = np.random.normal(mean_2, std_2, int(size_2))
-
-            bimodal = np.concatenate([norm_1, norm_2])
-            self.bimodal = np.intc((np.round(bimodal[bimodal > 1])))
-        else:
-            pass
+        bimodal = np.concatenate([norm_1, norm_2])
+        self.bimodal = np.intc((np.round(bimodal[bimodal > 1])))
 
         self.intervals = np.random.choice(self.bimodal, interval_nbr)
 
@@ -101,7 +92,7 @@ class Generator(object):
         self.save_to_file(directory)
 
     @staticmethod
-    def load_from_file(path='res/tasks_cv-1-wl-0.95.txt'):
+    def load_from_file(path='res/cv-1/test-0/intervals-1000/tasks_cv-1-wl-0.1-in-1000.txt'):
         with open(path) as json_file:
             data = json.load(json_file)
             c_var, workload, intervals_n, cols = data['c_var'], data['workload'], data['intervals_n'], data['columns']
