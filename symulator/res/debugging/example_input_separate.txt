@@ -1,0 +1,31 @@
+{
+  "c_var": 1,
+  "workload": 0.77,
+  "columns": "id arrival size dt_max",
+  "tasks": [
+    {
+      "id": 1,
+      "arrival": 0.00,
+      "size": 6.00,
+      "dt_max": 1.00
+    },
+    {
+      "id": 2,
+      "arrival": 8.00,
+      "size": 1.00,
+      "dt_max": 1.00
+    },
+    {
+      "id": 3,
+      "arrival": 10.00,
+      "size": 2.00,
+      "dt_max": 1.00
+    },
+    {
+      "id": 4,
+      "arrival": 12.00,
+      "size": 1.00,
+      "dt_max": 1.00
+    }
+  ]
+}
