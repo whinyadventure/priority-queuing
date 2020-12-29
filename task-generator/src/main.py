@@ -5,8 +5,8 @@ import numpy as np
 from src.generator import *
 
 
-def generate_log_batch():
-    for cv in range(1, 11):  # for coefficient of variation in range 1:10
+def generate_log_batch(cv_range):
+    for cv in cv_range:
         for idx in range(N_TESTS):
             for itr in INTERVAL_NBR:
                 directory = f'res/cv-{cv}/test-{idx}/intervals-{itr}/'
@@ -24,7 +24,8 @@ def generate_log_batch():
 
 
 if __name__ == '__main__':
-    generate_log_batch()
+    # generate_log_batch(range(1, 11)) # for coefficient of variation in range 1:10
+    generate_log_batch([0.3, 0.7])
 
 
 

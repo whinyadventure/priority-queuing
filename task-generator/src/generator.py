@@ -16,13 +16,31 @@ class Generator(object):
         self.sizes = []
 
     def populate_intervals(self, interval_nbr):
-        size_1 = PARAMS[self.c_var - 1][0] * N_SAMPLES
+        if self.c_var == 0.3:
+            mean_1 = 13
+            std_1 = 13
+            size_1 = 0.2 * N_SAMPLES
 
-        mean_2 = PARAMS[self.c_var - 1][1]
-        std_2 = PARAMS[self.c_var - 1][2]
+            mean_2 = 13
+            std_2 = 0.5
+        elif self.c_var == 0.7:
+            mean_1 = 6
+            std_1 = 6
+            size_1 = 0.4 * N_SAMPLES
+
+            mean_2 = 13
+            std_2 = 13
+        else:
+            mean_1 = 3
+            std_1 = 1
+            size_1 = PARAMS_CV_1_TO_10[self.c_var - 1][0] * N_SAMPLES
+
+            mean_2 = PARAMS_CV_1_TO_10[self.c_var - 1][1]
+            std_2 = PARAMS_CV_1_TO_10[self.c_var - 1][2]
+
         size_2 = N_SAMPLES - size_1
 
-        norm_1 = np.random.normal(MEAN_1, STD_1, int(size_1))
+        norm_1 = np.random.normal(mean_1, std_1, int(size_1))
         norm_2 = np.random.normal(mean_2, std_2, int(size_2))
 
         bimodal = np.concatenate([norm_1, norm_2])
@@ -47,7 +65,6 @@ class Generator(object):
         output = 0
 
         while np.min(output) <= 0:
-            # output = np.around(np.random.normal(mean, mean * multiplier, out_size), 1)
             output = np.random.normal(mean, mean * multiplier, out_size)
 
         return output if len(output) > 1 else float(output)
